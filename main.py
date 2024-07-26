@@ -1,19 +1,15 @@
-from utils.core.telegram import Accounts
-from utils.starter import start, stats
+from utilities.core.telegram import Accounts
+from utilities.starter import start, stats
 import asyncio
 from data import config
 from itertools import zip_longest
-from utils.core import get_all_lines
+from utilities.core import get_all_lines
 import os
 
 
 async def main():
-    print("Soft's author: https://t.me/ApeCryptor\n")
-    action = int(input("Select action:\n0. About soft\n1. Start soft\n2. Get statistics\n3. Create sessions\n\n> "))
-
-    if action == 0:
-        print(config.SOFT_INFO)
-        return
+    print("\n Nailambe\'s DogHoust_bot (https://github.com/NailAmber) forked by Soft's author: https://t.me/ApeCryptor\n")
+    action = int(input("Select action:\n1. Start soft\n2. Get statistics\n3. Create sessions\n\n> "))
 
     if not os.path.exists('sessions'): os.mkdir('sessions')
 
