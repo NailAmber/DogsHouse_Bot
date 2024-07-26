@@ -1,6 +1,8 @@
 # DogsHouse-Bot
 Bot for https://t.me/dogshouse_bot
 
+
+Thanks to ApeCryptor:
 More crypto themes and softs in telegram: [ApeCryptor](https://t.me/+_xCNXumUNWJkYjAy "ApeCryptor") 🦧
 Additional soft information: https://t.me/ApeCryptorSoft/105
 
