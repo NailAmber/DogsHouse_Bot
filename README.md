@@ -12,6 +12,8 @@ Additional soft information: https://t.me/ApeCryptorSoft/105
 | Multithreading                                                   |     ✅     |
 | Binding a proxy to a session                                     |     ✅     |
 | Auto-login                                                       |     ✅     |
+| Auto task completion | ✅ |
+| Flexible auto config |  ✅ |
 | Random sleep time between accounts, complete tasks, claim points |     ✅     |
 | Support pyrogram .session                                        |     ✅     |
 | Get statistics for all accounts                                  |     ✅     |
@@ -19,7 +21,8 @@ Additional soft information: https://t.me/ApeCryptorSoft/105
 ## Settings data/config.py
 | Setting                      | Description                                                                                    |
 |------------------------------|------------------------------------------------------------------------------------------------|
-| **API_ID / API_HASH**        | Platform data from which to launch a Telegram session                                          |
+| **REF_LINKS: how much refs you need** | Your ref links and how much refs you need on account (5 recommended) |  
+| **API_ID / API_HASH (in api_config.json)**        | Platform data from which to launch a Telegram session                                          |
 | **DELAYS-ACCOUNT**           | Delay between connections to accounts (the more accounts, the longer the delay)                |
 | **PROXY_TYPE**               | Proxy type for telegram session                                                                |
 | **WORKDIR**                  | directory with session                                                                         |
