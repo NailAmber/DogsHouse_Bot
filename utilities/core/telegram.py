@@ -36,7 +36,7 @@ class Accounts:
 
     async def check_valid_account(self, account: dict):
         session_name, phone_number, proxy = account.values()
-        with open("DogsHouse_Bot/data/api_config.json", "r") as f:
+        with open("data/api_config.json", "r") as f:
             apis = json.load(f)
             phone_number_json = apis[phone_number]
             self.api_id = phone_number_json[0]

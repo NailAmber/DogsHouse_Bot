@@ -1,5 +1,5 @@
-# your ref link
-REF_LINK = 'https://t.me/dogshouse_bot/join?startapp=jq3HuDDdRoWMYOsHBK9JdQ'
+# your ref link and countdown for refs by
+REF_LINK = {'https://t.me/dogshouse_bot/join?startapp=jq3HuDDdRoWMYOsHBK9JdQ': 1, 'https://t.me/dogshouse_bot/join?startapp=x8Cd2Z_rSAO2GpXMMsztrA': 5}
 
 DELAYS = {
     'ACCOUNT': [5, 15],  # delay between connections to accounts (the more accounts, the longer the delay)

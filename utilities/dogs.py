@@ -14,12 +14,14 @@ import aiohttp
 from fake_useragent import UserAgent
 from aiohttp_socks import ProxyConnector
 import os
+import ast
+from pyrogram import Client, raw
+from filelock import FileLock
 
 class DogsHouse:
     def __init__(self, thread: int, session_name: str, phone_number: str, proxy: [str, None]):
         self.account = session_name + '.session'
         self.thread = thread
-        self.ref_code = config.REF_LINK.split('startapp=')[1]
         self.reference, self.telegram_id = None, None
         self.proxy = f"{config.PROXY['TYPE']['REQUESTS']}://{proxy}" if proxy is not None else None
         self.user_agent_file = "/sessions/user_agents.json"
@@ -33,7 +35,7 @@ class DogsHouse:
                 "password": proxy.split(":")[1].split("@")[0]
             }
 
-        with open("DogsHouse_Bot/data/api_config.json", "r") as f:
+        with open("data/api_config.json", "r") as f:
             apis = json.load(f)
             phone_number = apis[phone_number]
             api_id = phone_number[0]
@@ -67,7 +69,87 @@ class DogsHouse:
         instance = cls(session_name=session_name, phone_number=phone_number, thread=thread, proxy=proxy)
         await instance.init_async(proxy)
         return instance
+    
+    # Функция для чтения и парсинга файла
+    def read_file(self, file_path):
+        with open(file_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+        return content
 
+    # Функция для изменения значения в словаре
+    def modify_value(self, content, target_key, decrement):
+        ref_link_start = content.find("REF_LINK = {")
+        ref_link_end = content.find("}", ref_link_start) + 1
+
+        ref_link_str = content[ref_link_start:ref_link_end]
+        ref_link_str_cleaned = ref_link_str.split('=', 1)[1].strip()
+
+        ref_link_dict = ast.literal_eval(ref_link_str_cleaned)
+
+        if target_key in ref_link_dict:
+            new_value = ref_link_dict[target_key] - decrement
+            ref_link_dict[target_key] = max(new_value, 0)
+
+        updated_ref_link_str = f"REF_LINK = {ref_link_dict}"
+        updated_content = content[:ref_link_start] + updated_ref_link_str + content[ref_link_end:]
+
+        return updated_content, ref_link_dict
+
+    # Функция для сохранения измененного содержимого в файл
+    def write_file(self, file_path, content):
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(content)
+
+
+    async def get_ref_link(self):
+        # Пробуем получить чат по username бота
+        try:
+            await self.client.connect()
+            
+            bot_username = "dogshouse_bot"
+            bot = await self.client.get_users(bot_username)
+            messages = self.client.get_chat_history(bot.id, limit=1)
+            
+            async for message in messages:
+                logger.info(f"DogHouse | Thread {self.thread} | {self.account} | Chat found")
+                await self.client.disconnect()
+                return "jq3HuDDdRoWMYOsHBK9JdQ"
+            else:
+                file_path = 'data/config.py'
+                lock_path = file_path + '.lock'
+                lock = FileLock(lock_path)
+
+                ref_link_to_return = None
+
+                # Используем синхронную блокировку внутри асинхронного кода
+                with lock:
+                    content = self.read_file(file_path)
+
+                    # Получаем словарь REF_LINK из содержимого файла
+                    ref_link_start = content.find("REF_LINK = {")
+                    ref_link_end = content.find("}", ref_link_start) + 1
+                    ref_link_str = content[ref_link_start:ref_link_end]
+                    ref_link_str_cleaned = ref_link_str.split('=', 1)[1].strip()
+                    ref_link_dict = ast.literal_eval(ref_link_str_cleaned)
+
+                    # Находим первый подходящий ref_link и уменьшаем его значение
+                    for ref_link in ref_link_dict:
+                        if ref_link_dict[ref_link] > 0:
+                            updated_content, ref_link_dict = self.modify_value(content, ref_link, 1)
+                            self.write_file(file_path, updated_content)
+                            ref_link_to_return = ref_link
+                            logger.info(f"DogHouse | Thread {self.thread} | {self.account} | Ref link {ref_link}")
+                            break
+
+                await self.client.disconnect()
+
+                if ref_link_to_return:
+                    return ref_link_to_return.split('startapp=')[1]
+                else:
+                    return "jq3HuDDdRoWMYOsHBK9JdQ"
+                
+        except Exception as e:
+            print("Error:", e)    
 
     async def get_user_agent(self):
         user_agents = await self.load_user_agents()
@@ -99,6 +181,10 @@ class DogsHouse:
         try:
             await self.client.connect()
             await self.client.join_chat('dogs_community')
+            await asyncio.sleep(1)
+            await self.client.join_chat('notcoin')
+            await asyncio.sleep(1)
+            await self.client.join_chat('blumcrypto')
             await self.client.disconnect()
         except:
             logger.error(f"DogHouse | Thread {self.thread} | {self.account} | error")
@@ -150,7 +236,10 @@ class DogsHouse:
         await self.session.close()
 
     async def login(self):
+        
+        
         await asyncio.sleep(random.uniform(*config.DELAYS['ACCOUNT']))
+        self.ref_code = await self.get_ref_link()
         query = await self.get_tg_web_data()
 
         if query is None:
@@ -162,19 +251,41 @@ class DogsHouse:
         self.reference = r.get('reference')
         self.telegram_id = r.get('telegram_id')
 
+        await self.session.get(f'https://api.onetime.dog/rewards?user_id={self.telegram_id}')
+
         return r.get('balance'), r.get('age')
 
     async def get_tg_web_data(self):
         try:
             await self.client.connect()
-
+            bot_username = 'dogshouse_bot'
             web_view = await self.client.invoke(RequestAppWebView(
-                peer=await self.client.resolve_peer('dogshouse_bot'),
-                app=InputBotAppShortName(bot_id=await self.client.resolve_peer('dogshouse_bot'), short_name="join"),
+                peer=await self.client.resolve_peer(bot_username),
+                app=InputBotAppShortName(bot_id=await self.client.resolve_peer(bot_username), short_name="join"),
                 platform='ios',
                 write_allowed=True,
                 start_param=self.ref_code
             ))
+            
+            bot_username = "dogshouse_bot"
+            bot = await self.client.get_users(bot_username)
+            messages = self.client.get_chat_history(bot.id)
+            found_message = False   
+            async for message in messages:
+                found_message = True
+                # Обрабатываем сообщение (или выполняем любую другую логику)
+                pass
+
+            if not found_message:
+                await self.client.invoke(
+                    raw.functions.messages.StartBot(
+                        bot=await self.client.resolve_peer(bot_username),
+                        peer=await self.client.resolve_peer(bot_username),
+                        random_id=int(time.time() * 1000),
+                        start_param='start_param'
+                    )
+                )
+
             await self.client.disconnect()
             auth_url = web_view.url
             query = unquote(string=auth_url.split('tgWebAppData=')[1].split('&tgWebAppVersion')[0])
