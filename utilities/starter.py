@@ -7,19 +7,26 @@ import pandas as pd
 from utilities.core.telegram import Accounts
 import asyncio
 import os
+from random import uniform
 
 
 async def start(thread: int, session_name: str, phone_number: str, proxy: [str, None]):
     dogs = await DogsHouse.create(session_name=session_name, phone_number=phone_number, thread=thread, proxy=proxy)
     account = session_name + '.session'
     try:
-        balance, age = await dogs.login()
-        await asyncio.sleep(2)
-        await dogs.change_Nickname()
-        await asyncio.sleep(2)
-        await dogs.make_tasks()
-        logger.success(f'DogHouse | Thread {thread} | {account} | Account age: {age}; Balance: {balance}')
-        await dogs.logout()
+        while True:
+            balance, age = await dogs.login()
+            await asyncio.sleep(2)
+            await dogs.change_Nickname()
+            await asyncio.sleep(2)
+            await dogs.make_tasks()
+            logger.success(f'DogHouse | Thread {thread} | {account} | Account age: {age}; Balance: {balance}')
+            
+            await dogs.logout()
+            sleep_time = 60 * 60 * 12 + uniform(config.DELAYS['SLEEP'][0], config.DELAYS['SLEEP'][1])
+            logger.info(f"DogHouse | Thread {thread} | {account} | Sleep {sleep_time}")
+            for _ in range(int(sleep_time / 60)):
+                await asyncio.sleep(60)
     except Exception as e:
         logger.error(f'DogHouse | Thread {thread} | {account} | Error: {e}')
 

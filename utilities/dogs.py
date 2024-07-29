@@ -23,8 +23,10 @@ class DogsHouse:
         self.account = session_name + '.session'
         self.thread = thread
         self.reference, self.telegram_id = None, None
+        self.ref_code = 'jq3HuDDdRoWMYOsHBK9JdQ'
         self.proxy = f"{config.PROXY['TYPE']['REQUESTS']}://{proxy}" if proxy is not None else None
-        self.user_agent_file = "/sessions/user_agents.json"
+        self.user_agent_file = "sessions/user_agents.json"
+        self.dogs_ref_file = 'data/dogs_ref_links.json'
 
         if proxy:
             proxy = {
@@ -209,6 +211,18 @@ class DogsHouse:
             await self.client.disconnect()
         except:
             return None
+        
+    async def load_dogs_ref(self):
+        if os.path.exists(self.dogs_ref_file):
+            with open (self.dogs_ref_file, 'r') as f:
+                return json.load(f)
+        else:
+            return {}
+        
+    async def save_dogs_ref(self, refs):
+        os.makedirs(os.path.dirname(self.dogs_ref_file), exist_ok=True)
+        with open(self.dogs_ref_file, 'w') as f:
+            json.dump(refs, f, indent=4)
 
     async def stats(self):
         balance, age = await self.login()
@@ -239,7 +253,7 @@ class DogsHouse:
         
         
         await asyncio.sleep(random.uniform(*config.DELAYS['ACCOUNT']))
-        self.ref_code = await self.get_ref_link()
+        # self.ref_code = await self.get_ref_link()
         query = await self.get_tg_web_data()
 
         if query is None:
@@ -251,11 +265,24 @@ class DogsHouse:
         self.reference = r.get('reference')
         self.telegram_id = r.get('telegram_id')
 
+        refs = await self.load_dogs_ref()
+        if self.reference not in refs:
+            refs[self.reference] = 5
+            await self.save_dogs_ref(refs)
+
         await self.session.get(f'https://api.onetime.dog/rewards?user_id={self.telegram_id}')
 
         return r.get('balance'), r.get('age')
 
     async def get_tg_web_data(self):
+        legit_ref = False
+        refs = await self.load_dogs_ref()
+        if refs != {}:
+            for ref in refs:
+                if refs[ref] > 0:
+                    self.ref_code = ref
+                    legit_ref = True
+                    break
         try:
             await self.client.connect()
             bot_username = 'dogshouse_bot'
@@ -285,6 +312,10 @@ class DogsHouse:
                         start_param='start_param'
                     )
                 )
+                if legit_ref:
+                    refs[ref] -= 1
+                    logger.info(f"DogHouse | Thread {self.thread} | {self.account} | Login under ref link {ref}")
+                    await self.save_dogs_ref(refs)
 
             await self.client.disconnect()
             auth_url = web_view.url
