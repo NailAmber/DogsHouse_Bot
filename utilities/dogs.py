@@ -17,6 +17,7 @@ import os
 import ast
 from pyrogram import Client, raw
 from filelock import FileLock
+from random import randrange
 
 class DogsHouse:
     def __init__(self, thread: int, session_name: str, phone_number: str, proxy: [str, None]):
@@ -267,7 +268,7 @@ class DogsHouse:
 
         refs = await self.load_dogs_ref()
         if self.reference not in refs:
-            refs[self.reference] = 5
+            refs[self.reference] = randrange(5,7)
             await self.save_dogs_ref(refs)
 
         await self.session.get(f'https://api.onetime.dog/rewards?user_id={self.telegram_id}')
@@ -285,14 +286,6 @@ class DogsHouse:
                     break
         try:
             await self.client.connect()
-            bot_username = 'dogshouse_bot'
-            web_view = await self.client.invoke(RequestAppWebView(
-                peer=await self.client.resolve_peer(bot_username),
-                app=InputBotAppShortName(bot_id=await self.client.resolve_peer(bot_username), short_name="join"),
-                platform='ios',
-                write_allowed=True,
-                start_param=self.ref_code
-            ))
             
             bot_username = "dogshouse_bot"
             bot = await self.client.get_users(bot_username)
@@ -302,20 +295,22 @@ class DogsHouse:
                 found_message = True
                 # Обрабатываем сообщение (или выполняем любую другую логику)
                 pass
-
             if not found_message:
-                await self.client.invoke(
-                    raw.functions.messages.StartBot(
-                        bot=await self.client.resolve_peer(bot_username),
-                        peer=await self.client.resolve_peer(bot_username),
-                        random_id=int(time.time() * 1000),
-                        start_param='start_param'
-                    )
-                )
-                if legit_ref:
-                    refs[ref] -= 1
-                    logger.info(f"DogHouse | Thread {self.thread} | {self.account} | Login under ref link {ref}")
-                    await self.save_dogs_ref(refs)
+                refs[ref] -= 1
+                logger.info(f"DogHouse | Thread {self.thread} | {self.account} | Login under ref link {ref}")
+                await self.save_dogs_ref(refs)
+
+            
+            bot_username = 'dogshouse_bot'
+            web_view = await self.client.invoke(RequestAppWebView(
+                peer=await self.client.resolve_peer(bot_username),
+                app=InputBotAppShortName(bot_id=await self.client.resolve_peer(bot_username), short_name="join"),
+                platform='ios',
+                write_allowed=True,
+                start_param=self.ref_code
+            ))
+            
+            
 
             await self.client.disconnect()
             auth_url = web_view.url
