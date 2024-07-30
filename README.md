@@ -13,7 +13,7 @@ Thanks to ApeCryptor:
 | Binding a proxy to a session                                     |     ✅     |
 | Auto-login                                                       |     ✅     |
 | Auto task completion | ✅ |
-| Flexible auto config |  ✅ |
+| Flexible auto ref system with special generated file with refs of all accounts |  ✅ |
 | Random sleep time between accounts, complete tasks, claim points |     ✅     |
 | Support pyrogram .session                                        |     ✅     |
 | Get statistics for all accounts                                  |     ✅     |
@@ -28,7 +28,7 @@ Thanks to ApeCryptor:
 | **WORKDIR**                  | directory with session                                                                         |
 
 ## Requirements
-- Python 3.9 (you can install it [here](https://www.python.org/downloads/release/python-390/)) 
+- Python 3.12 (you can install it [here](https://www.python.org/downloads/release/python-390/)) 
 - Telegram API_ID and API_HASH (you can get them [here](https://my.telegram.org/auth))
 
 1. Install the required dependencies:
