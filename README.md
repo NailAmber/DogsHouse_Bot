@@ -21,8 +21,7 @@ Thanks to ApeCryptor:
 ## Settings data/config.py
 | Setting                      | Description                                                                                    |
 |------------------------------|------------------------------------------------------------------------------------------------|
-| **REF_LINKS: how much refs you need** | Your ref links and how much refs you need on account (5 recommended) |  
-| **API_ID / API_HASH (in api_config.json)**        | Platform data from which to launch a Telegram session                                          |
+| **API_ID / API_HASH** | 	Platform data from which to launch a Telegram session (stock - Android)                                  |
 | **DELAYS-ACCOUNT**           | Delay between connections to accounts (the more accounts, the longer the delay)                |
 | **PROXY_TYPE**               | Proxy type for telegram session                                                                |
 | **WORKDIR**                  | directory with session                                                                         |
