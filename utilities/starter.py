@@ -27,9 +27,9 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
             sleep_time = 60 * 60 * 12 + uniform(config.DELAYS['SLEEP'][0], config.DELAYS['SLEEP'][1])
             logger.info(f"DogHouse | Thread {thread} | {account} | Sleep {sleep_time}")
             await dogs.session.close()
-            await asyncio.sleep(30)
-            # for _ in range(int(sleep_time / 60)):
-            #     await asyncio.sleep(60)
+            # await asyncio.sleep(30)
+            for _ in range(int(sleep_time / 60)):
+                await asyncio.sleep(60)
             
     except Exception as e:
         logger.error(f'DogHouse | Thread {thread} | {account} | Error: {e}')

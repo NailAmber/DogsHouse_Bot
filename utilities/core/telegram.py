@@ -5,13 +5,13 @@ import random
 from data import config
 from pyrogram import Client
 from utilities.core import logger, load_from_json, save_list_to_file, save_to_json, get_all_lines
-import json
+
 
 class Accounts:
     def __init__(self):
         self.workdir = config.WORKDIR
-        # self.api_id = config.API_ID
-        # self.api_hash = config.API_HASH
+        self.api_id = config.API_ID
+        self.api_hash = config.API_HASH
 
     @staticmethod
     def parse_proxy(proxy):
@@ -58,11 +58,7 @@ class Accounts:
 
     async def check_valid_account(self, account: dict):
         session_name, phone_number, proxy = account.values()
-        with open("./data/api_config.json", "r") as f:
-            apis = json.load(f)
-            phone_number_json = apis[phone_number]
-            self.api_id = phone_number_json[0]
-            self.api_hash = phone_number_json[1]
+
         try:
             proxy_dict = {
                 "scheme": config.PROXY['TYPE']['TG'],
@@ -112,8 +108,8 @@ class Accounts:
         valid_accounts, invalid_accounts = await self.check_valid_accounts(available_accounts)
 
         if invalid_accounts:
-            save_list_to_file(f"{config.WORKDIR}invalid_accounts.txt", invalid_accounts)
-            logger.info(f"Saved {len(invalid_accounts)} invalid account(s) in {config.WORKDIR}invalid_accounts.txt")
+            save_list_to_file(f"{ config.WORKDIR}invalid_accounts.txt", invalid_accounts)
+            logger.info(f"Saved {len(invalid_accounts)} invalid account(s) in { config.WORKDIR}invalid_accounts.txt")
 
         if not valid_accounts:
             raise ValueError("Have not valid sessions")
@@ -149,7 +145,7 @@ class Accounts:
             async with client:
                 me = await client.get_me()
 
-            save_to_json(f'{config.WORKDIR}accounts.json', dict_={
+            save_to_json(f'{ config.WORKDIR}accounts.json', dict_={
                 "session_name": session_name,
                 "phone_number": phone_number,
                 "proxy": proxy

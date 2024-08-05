@@ -1,5 +1,6 @@
-# your ref link and countdown for refs by (OLD SYSTEM, NOT USING)
-# REF_LINK = {'https://t.me/dogshouse_bot/join?startapp=jq3HuDDdRoWMYOsHBK9JdQ': 1, 'https://t.me/dogshouse_bot/join?startapp=x8Cd2Z_rSAO2GpXMMsztrA': 5}
+API_ID = 123123123
+API_HASH = "hash"
+
 
 DELAYS = {
     'ACCOUNT': [5, 30],  # delay between connections to accounts (the more accounts, the longer the delay)
