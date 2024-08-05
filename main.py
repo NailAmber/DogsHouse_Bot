@@ -5,7 +5,6 @@ from data import config
 from itertools import zip_longest
 from utilities.core import get_all_lines
 import os
-from utilities.core import create_sessions
 
 
 async def main():
@@ -24,7 +23,7 @@ async def main():
                 f.write("[]")
 
     if action == 3:
-        await create_sessions()
+        await Accounts().create_sessions()
 
     if action == 2:
         await stats()
