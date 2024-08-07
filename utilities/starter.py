@@ -47,7 +47,7 @@ async def stats():
     data = await asyncio.gather(*tasks)
 
     path = f"statistics/statistics_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv"
-    columns = ['Phone number', 'Name', 'Balance', 'Leaderboard', 'Age', 'Referrals', 'Referral link', 'Proxy (login:password@ip:port)']
+    columns = ['Phone number', 'Name', 'Balance', 'Leaderboard', 'Age', 'Referrals', 'frens', 'Referral link', 'Proxy (login:password@ip:port)']
 
     if not os.path.exists('statistics'): os.mkdir('statistics')
     df = pd.DataFrame(data, columns=columns)

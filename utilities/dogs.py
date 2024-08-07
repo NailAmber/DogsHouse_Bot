@@ -227,6 +227,7 @@ class DogsHouse:
 
         r = await (await self.session.get(f'https://api.onetime.dog/frens?user_id={self.telegram_id}&reference={self.reference}')).json()
         referrals = r.get('count')
+        frens = [username['username'] for username in r.get('frens')]
         referral_link = f'https://t.me/dogshouse_bot/join?startapp={self.reference}'
 
         await self.logout()
@@ -238,7 +239,7 @@ class DogsHouse:
 
         proxy = self.proxy.replace('http://', "") if self.proxy is not None else '-'
 
-        return [phone_number, name, str(balance), str(leaderboard), str(age), str(referrals), referral_link, proxy]
+        return [phone_number, name, str(balance), str(leaderboard), str(age), str(referrals), str(frens), referral_link, proxy]
 
     async def logout(self):
         await self.session.close()
